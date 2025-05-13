@@ -176,54 +176,80 @@ public class TestDao extends Dao {
         return result;
     }
 
-    public List<Test> selectByConditions(Map<String,String> cond, School school) throws Exception {
+    public List<Test> selectByConditions(Map<String, String> cond, School school) throws Exception {
         List<Test> list = new ArrayList<>();
         Connection con = getConnection();
         StringBuilder sql = new StringBuilder(
-            "SELECT t.*, s.name student_name, s.ent_year, t.class_num " +
-            "FROM test t JOIN student s ON t.student_no=s.no AND t.school_cd=s.school_cd " +
-            "WHERE t.school_cd=?"
+            "SELECT t.*, " +
+            "s.name AS student_name, s.ent_year, " +
+            "sub.name AS subject_name " +  // ← 科目名を取得
+            "FROM test t " +
+            "JOIN student s ON t.student_no = s.no AND t.school_cd = s.school_cd " +
+            "JOIN subject sub ON t.subject_cd = sub.cd AND t.school_cd = sub.school_cd " +  // ← 科目JOIN
+            "WHERE t.school_cd = ?"
         );
         List<Object> prm = new ArrayList<>();
         prm.add(school.getCd());
 
-        if (cond.containsKey("entYear")){
-            sql.append(" AND s.ent_year=?"); prm.add(Integer.parseInt(cond.get("entYear")));
+        // 条件追加
+        if (cond.containsKey("entYear")) {
+            sql.append(" AND s.ent_year = ?");
+            prm.add(Integer.parseInt(cond.get("entYear")));
         }
-        if (cond.containsKey("classNum")){
-            sql.append(" AND t.class_num=?"); prm.add(cond.get("classNum"));
+        if (cond.containsKey("classNum")) {
+            sql.append(" AND t.class_num = ?");
+            prm.add(cond.get("classNum"));
         }
-        if (cond.containsKey("subjectCd")){
-            sql.append(" AND t.subject_cd=?"); prm.add(cond.get("subjectCd"));
+        if (cond.containsKey("subjectCd")) {
+            sql.append(" AND t.subject_cd = ?");
+            prm.add(cond.get("subjectCd"));
         }
-        if (cond.containsKey("no")){
-            sql.append(" AND t.no=?"); prm.add(Integer.parseInt(cond.get("no")));
+        if (cond.containsKey("no")) {
+            sql.append(" AND t.no = ?");
+            prm.add(Integer.parseInt(cond.get("no")));
         }
-        if (cond.containsKey("studentInfo")){
+        if (cond.containsKey("studentInfo")) {
             sql.append(" AND (s.no LIKE ? OR s.name LIKE ?)");
-            String kw="%"+cond.get("studentInfo")+"%"; prm.add(kw); prm.add(kw);
+            String kw = "%" + cond.get("studentInfo") + "%";
+            prm.add(kw); prm.add(kw);
         }
-        sql.append(" ORDER BY s.ent_year,t.class_num,s.no,t.no");
 
-        try(PreparedStatement st = con.prepareStatement(sql.toString())){
-            for(int i=0;i<prm.size();i++) st.setObject(i+1,prm.get(i));
-            try(ResultSet rs = st.executeQuery()){
-                while(rs.next()){
+        sql.append(" ORDER BY s.ent_year, t.class_num, s.no, t.no");
+
+        try (PreparedStatement st = con.prepareStatement(sql.toString())) {
+            for (int i = 0; i < prm.size(); i++) {
+                st.setObject(i + 1, prm.get(i));
+            }
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
                     Test t = new Test();
+
+                    // 学生情報
                     Student stu = new Student();
                     stu.setNo(rs.getString("student_no"));
                     stu.setName(rs.getString("student_name"));
                     t.setStudent(stu);
-                    Subject sbj = new Subject(); sbj.setCd(rs.getString("subject_cd"));
+
+                    // 科目情報（← ここで科目名をセット）
+                    Subject sbj = new Subject();
+                    sbj.setCd(rs.getString("subject_cd"));
+                    sbj.setName(rs.getString("subject_name"));  // ← 科目名セット
                     t.setSubject(sbj);
+
+                    // その他
                     t.setSchool(school);
                     t.setNo(rs.getInt("no"));
                     t.setPoint(rs.getInt("point"));
                     t.setClassNum(rs.getString("class_num"));
+
                     list.add(t);
                 }
             }
-        } finally { con.close(); }
+        } finally {
+            if (con != null) con.close();
+        }
+
         return list;
     }
+
 }

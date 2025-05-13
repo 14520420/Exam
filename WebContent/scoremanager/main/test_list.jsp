@@ -72,14 +72,15 @@
         <c:when test="${tests.size()>0}">
           <div class="mt-2">検索結果: ${tests.size()} 件</div>
           <table class="table table-hover">
-            <thead><tr><th>学生番号</th><th>氏名</th><th>得点</th><th>クラス</th></tr></thead>
+            <thead><tr><th>学生番号</th><th>氏名</th><th>クラス</th><th>科目</th><th>得点</th></tr></thead>
             <tbody>
               <c:forEach var="t" items="${tests}">
                 <tr>
                   <td>${t.student.no}</td>
                   <td>${empty t.student.name ? '－' : t.student.name}</td>
-                  <td>${t.point}</td>
                   <td>${t.classNum}</td>
+                  <td>${t.subject.name}</td>
+                  <td>${t.point}</td>
                 </tr>
               </c:forEach>
             </tbody>
