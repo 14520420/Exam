@@ -19,7 +19,7 @@
           <select class="form-select" name="ent_year">
             <option value="">--------</option>
             <c:forEach var="year" items="${entYearList}">
-              <option value="${year}">${year}</option>
+              <option value="${year}" <c:if test="${selectedEntYear == year}">selected</c:if>>${year}</option>
             </c:forEach>
           </select>
         </div>
@@ -28,7 +28,7 @@
           <select class="form-select" name="class_num">
             <option value="">--------</option>
             <c:forEach var="cls" items="${classList}">
-              <option value="${cls.class_num}">${cls.class_num}</option>
+              <option value="${cls.class_num}" <c:if test="${selectedClassNum == cls.class_num}">selected</c:if>>${cls.class_num}</option>
             </c:forEach>
           </select>
         </div>
@@ -37,7 +37,7 @@
           <select class="form-select" name="subject_cd">
             <option value="">--------</option>
             <c:forEach var="subject" items="${subjectList}">
-              <option value="${subject.cd}">${subject.name}</option>
+              <option value="${subject.cd}" <c:if test="${selectedSubjectCd == subject.cd}">selected</c:if>>${subject.name}</option>
             </c:forEach>
           </select>
         </div>
@@ -46,7 +46,7 @@
           <select class="form-select" name="no">
             <option value="">--------</option>
             <c:forEach var="i" begin="1" end="4">
-              <option value="${i}">${i}</option>
+              <option value="${i}" <c:if test="${selectedNo == i}">selected</c:if>>${i}</option>
             </c:forEach>
           </select>
         </div>
@@ -56,4 +56,4 @@
       </div>
     </form>
   </c:param>
-</c:import>
+</c:import> 

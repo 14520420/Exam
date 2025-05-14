@@ -37,7 +37,15 @@
 					style="height: 10rem; background-color: #ddb;">
 					<a href="ClassList.action">クラス管理</a>
 				</div>
+
+				<%-- 管理者のみ表示するメニュー --%>
+				<c:if test="${user.isAdmin()}">
+					<div class="col d-flex align-items-center justify-content-center mx-2 rounded shadow"
+						style="height: 10rem; background-color: #dcd;">
+						<a href="TeacherList.action">教員管理</a>
+					</div>
+				</c:if>
 			</div>
 		</section>
 	</c:param>
-</c:import>
+</c:import> 

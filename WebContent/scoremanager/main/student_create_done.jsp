@@ -19,4 +19,4 @@
 			style="text-decoration: none; color: blue;">学生一覧</a>
 	</div>
 </c:param>
-</c:import>
+</c:import> 

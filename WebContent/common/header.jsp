@@ -10,4 +10,4 @@
 		<span class="nav-item px-2">${user.getName()}様</span>
 		<a class="nav-item px-2" href="Logout.action">ログアウト</a>
 	</div>
-</c:if>
+</c:if> 
