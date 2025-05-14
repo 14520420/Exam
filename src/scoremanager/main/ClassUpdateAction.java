@@ -1,30 +1,53 @@
-// 変更のためjspへ
 package scoremanager.main;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import bean.ClassNum;
+import bean.School;
+import bean.Teacher;
+import dao.ClassNumDao;
 import tool.Action;
 
 public class ClassUpdateAction extends Action {
 
-	@Override
-	public void execute(
-		HttpServletRequest req, HttpServletResponse res
-	) throws Exception {
-		// 変数定義
-		String class_num;
-		int c_count;
+    @Override
+    public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        // セッションからログイン教師情報を取得
+        HttpSession session = req.getSession();
+        Teacher teacher = (Teacher) session.getAttribute("user");
 
-		// 値取得
-        class_num = req.getParameter("class_num");
-        c_count = Integer.parseInt(req.getParameter("c_count"));
+        // 未ログインの場合はログイン画面へリダイレクト
+        if (teacher == null || !teacher.isAuthenticated()) {
+            res.sendRedirect("../Login.action");
+            return;
+        }
 
-        // 値セット
-        req.setAttribute("old_class_num", class_num);
-        req.setAttribute("c_count", c_count);
+        // 学校情報を取得
+        School school = teacher.getSchool();
 
-		req.getRequestDispatcher("class_update.jsp").forward(req, res);
-	}
+        // クラス番号を取得
+        String classNum = req.getParameter("class_num");
+        if (classNum == null || classNum.trim().isEmpty()) {
+            res.sendRedirect("ClassList.action");
+            return;
+        }
 
-}
+        // クラス情報を取得
+        ClassNumDao dao = new ClassNumDao();
+        ClassNum classInfo = dao.get(classNum, school);
+
+        if (classInfo == null) {
+            // クラスが見つからない場合は一覧に戻る
+            res.sendRedirect("ClassList.action");
+            return;
+        }
+
+        // リクエスト属性に設定
+        req.setAttribute("class_num", classInfo);
+
+        // JSPへフォワード
+        req.getRequestDispatcher("class_update.jsp").forward(req, res);
+    }
+} 

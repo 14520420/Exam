@@ -1,4 +1,3 @@
-// クラス定義：学校情報をデータベースから取得するDAOクラス
 package dao;
 
 import java.sql.Connection;
@@ -62,4 +61,4 @@ public class SchoolDao extends Dao {
 		}
 		return school;
 	}
-}
+} 

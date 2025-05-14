@@ -5,7 +5,7 @@ public class Test {
 	private String classNum;
 	private School school;
 	private Subject subject;
-	
+
 	private int no;
 	private int point;
 
@@ -56,4 +56,4 @@ public class Test {
 	public void setPoint(int point) {
 		this.point = point;
 	}
-}
+} 

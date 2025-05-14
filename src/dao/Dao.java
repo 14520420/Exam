@@ -9,7 +9,6 @@ public class Dao {
     /**
      * データソース:DataSource:クラスフィールド
      */
-    // ds：DataSource型の静的フィールド
     static DataSource ds;
 
     /**
@@ -18,7 +17,6 @@ public class Dao {
      * @return データベースへのコネクション:Connection
      * @throws Exception
      */
-    // getConnectionメソッド：DB接続を取得する
     public Connection getConnection() throws Exception {
         // データソースがnullの場合
         if (ds == null) {
@@ -30,4 +28,4 @@ public class Dao {
         // データベースへのコネクションを返却
         return ds.getConnection();
     }
-}
+} 

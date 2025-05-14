@@ -25,4 +25,4 @@ public class LoginAction extends Action {
 		//JSPへフォワード 7
 		req.getRequestDispatcher("login.jsp").forward(req, res);
 	}
-}
+} 

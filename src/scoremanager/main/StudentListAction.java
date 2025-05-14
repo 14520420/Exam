@@ -90,4 +90,4 @@ public class StudentListAction extends Action {
 		//JSPへフォワード 7
 		req.getRequestDispatcher("student_list.jsp").forward(req, res);
 	}
-}
+} 

@@ -33,4 +33,4 @@ public class SubjectUpdateAction extends Action {
             req.getRequestDispatcher("/main/subject_list.jsp").forward(req, res);
         }
     }
-}
+} 

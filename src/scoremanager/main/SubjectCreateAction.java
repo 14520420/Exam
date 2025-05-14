@@ -29,4 +29,4 @@ public class SubjectCreateAction extends Action {
         // JSPへフォワード
         req.getRequestDispatcher("subject_create.jsp").forward(req, res);
     }
-}
+} 

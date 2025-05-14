@@ -19,3 +19,4 @@ public class ClassGradeListAction extends Action {
         request.getRequestDispatcher("scoremanager/main/class_grade_list.jsp").forward(request, response);
     }
 }
+ 

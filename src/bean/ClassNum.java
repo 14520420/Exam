@@ -36,5 +36,4 @@ public class ClassNum implements Serializable {
 	public void setC_count(int c_count) {
 		this.c_count = c_count;
 	}
-
 }

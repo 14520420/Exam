@@ -3,7 +3,6 @@ package bean;
 public class Subject {
 
 	private String cd;
-
 	private String name;
 	private School school;
 
@@ -30,5 +29,4 @@ public class Subject {
 	public void setSchool(School school) {
 		this.school = school;
 	}
-
-}
+}  

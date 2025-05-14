@@ -6,13 +6,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import bean.ClassNum;
-import bean.School;
 import bean.Teacher;
-import dao.StudentDao;
+import dao.TeacherDao;
 import tool.Action;
 
-public class ClassListAction extends Action {
+public class TeacherListAction extends Action {
 
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
@@ -26,17 +24,21 @@ public class ClassListAction extends Action {
             return;
         }
 
-        // 学校情報を取得
-        School school = teacher.getSchool();
+        // 管理者権限のチェック
+        if (!teacher.isAdmin()) {
+            req.setAttribute("error", "この機能を使用する権限がありません");
+            req.getRequestDispatcher("error.jsp").forward(req, res);
+            return;
+        }
 
-        // クラス情報を取得（学生数を含む）
-        StudentDao studentDao = new StudentDao();
-        List<ClassNum> classList = studentDao.class_count(school);
+        // 全教員情報を取得
+        TeacherDao dao = new TeacherDao();
+        List<Teacher> teacherList = dao.getAllTeachers();
 
         // リクエスト属性に設定
-        req.setAttribute("classList", classList);
+        req.setAttribute("teacherList", teacherList);
 
         // JSPへフォワード
-        req.getRequestDispatcher("class_list.jsp").forward(req, res);
+        req.getRequestDispatcher("teacher_list.jsp").forward(req, res);
     }
-} 
+}

@@ -16,6 +16,7 @@ import dao.TestDao;
 import tool.Action;
 
 public class TestRegistExecuteAction extends Action {
+    @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
         try {
             // ログインユーザー情報取得
@@ -34,7 +35,7 @@ public class TestRegistExecuteAction extends Action {
             String[] points = request.getParameterValues("point");
             String entYear = request.getParameter("ent_year");
             String classNum = request.getParameter("class_num");
-            String subjectCd = request.getParameter("subject_cd");
+            String subjectCd = request.getParameter("subject_cd"); // 'subjectId' ではなく 'cd' を使用
             String noStr = request.getParameter("no");
 
             if (studentNos == null || points == null) {
@@ -85,7 +86,7 @@ public class TestRegistExecuteAction extends Action {
         } catch (Exception e) {
             // エラー情報をセット
             request.setAttribute("error", e.getMessage());
-            request.getRequestDispatcher("error.jsp").forward(request, response);
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
     }
-}
+} 

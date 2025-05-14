@@ -1,70 +1,76 @@
-// 入力内容判定、db登録
 package scoremanager.main;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import bean.ClassNum;
+import bean.School;
 import bean.Teacher;
 import dao.ClassNumDao;
 import tool.Action;
 
 public class ClassCreateExecuteAction extends Action {
 
-	@Override
-	public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    @Override
+    public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        // セッションからログイン教師情報を取得
+        HttpSession session = req.getSession();
+        Teacher teacher = (Teacher) session.getAttribute("user");
 
-		// 変数定義
-		String class_num, error = null;
-		boolean deci;
-		// セッション
-		HttpSession session = req.getSession(false);
-		Teacher teacher = (Teacher)session.getAttribute("user");
-		// bean,dao
-		ClassNum cNum = new ClassNum();
-		ClassNumDao cNumDao = new ClassNumDao();
-		ClassNum class_cd = null;
+        // 未ログインの場合はログイン画面へリダイレクト
+        if (teacher == null || !teacher.isAuthenticated()) {
+            res.sendRedirect("../Login.action");
+            return;
+        }
 
-		// 値取得
-		class_num = req.getParameter("class_num");
+        // 学校情報を取得
+        School school = teacher.getSchool();
 
-		// dbクラス番号取得
-		try {
-			class_cd = cNumDao.get(class_num,teacher.getSchool());
-		} catch(Exception e) {
-			throw e;
-		}
+        // リクエストパラメータの取得
+        String classNum = req.getParameter("class_num");
 
-		// 重複チェック
-		if (class_cd != null) {
-			//errorに文字セット
-			error = "クラス番号が重複しています";
-			req.setAttribute("cderror", error);
-		}
+        // バリデーション
+        Map<String, String> errors = new HashMap<>();
+        if (classNum == null || classNum.trim().isEmpty()) {
+            errors.put("class_num", "クラス番号を入力してください");
+        }
 
-		// errorがnullでなければ入力フォームに
-		if (error != null) {
-			req.setAttribute("f1", class_num);
-			req.getRequestDispatcher("class_create.jsp").forward(req, res);
-		// errorがnullなら登録処理を実施し結果フォームへ
-		} else {
-			// beanに値セット
-			cNum.setClass_num(class_num);
-			cNum.setSchool(teacher.getSchool());
+        // 既存のクラスとの重複チェック
+        ClassNumDao dao = new ClassNumDao();
+        ClassNum existingClass = dao.get(classNum, school);
+        if (existingClass != null) {
+            errors.put("class_num", "このクラス番号は既に登録されています");
+        }
 
-			// db処理結果取得
-			deci = cNumDao.save(cNum);
-			// 結果判定、文字登録
-			if (deci) {
-				req.setAttribute("suc", "登録が完了しました。");
-			} else {
-				req.setAttribute("suc", "登録に失敗しました。内容確認の上もう一度お願いします。");
-			}
+        // エラーがある場合は入力画面に戻る
+        if (!errors.isEmpty()) {
+            req.setAttribute("errors", errors);
+            req.setAttribute("class_num", classNum);
+            req.getRequestDispatcher("class_create.jsp").forward(req, res);
+            return;
+        }
 
-			req.getRequestDispatcher("class_create_done.jsp").forward(req, res);
-		}
+        // クラス情報を保存
+        ClassNum newClass = new ClassNum();
+        newClass.setClass_num(classNum);
+        newClass.setSchool(school);
 
-	}
+        boolean result = dao.save(newClass);
 
-}
+        if (result) {
+            // 成功した場合は完了画面へ
+            req.setAttribute("class_num", classNum);
+            req.getRequestDispatcher("class_create_done.jsp").forward(req, res);
+        } else {
+            // 失敗した場合はエラーメッセージを表示して入力画面へ
+            errors.put("db", "クラスの登録に失敗しました");
+            req.setAttribute("errors", errors);
+            req.setAttribute("class_num", classNum);
+            req.getRequestDispatcher("class_create.jsp").forward(req, res);
+        }
+    }
+} 

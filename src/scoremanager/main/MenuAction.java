@@ -32,3 +32,4 @@ public class MenuAction extends Action {
 		req.getRequestDispatcher("menu.jsp").forward(req, res);
 	}
 }
+ 

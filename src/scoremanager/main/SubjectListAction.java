@@ -30,4 +30,4 @@ public class SubjectListAction extends Action {
         // JSPへフォワード
         req.getRequestDispatcher("subject_list.jsp").forward(req, res);
     }
-}
+} 
